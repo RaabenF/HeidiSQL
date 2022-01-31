@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A62D8D4C-D145-4132-AAB9-32557A29CD2F}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="heidisql.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\components\synedit\Packages\Delphi10.4\SynEdit_D.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\components\synedit\Packages\Delphi10.4\SynEdit_R.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="heidisql">
+        <MSBuild Projects="heidisql.dproj"/>
+    </Target>
+    <Target Name="heidisql:Clean">
+        <MSBuild Projects="heidisql.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="heidisql:Make">
+        <MSBuild Projects="heidisql.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SynEdit_D">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_D.dproj"/>
+    </Target>
+    <Target Name="SynEdit_D:Clean">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_D.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SynEdit_D:Make">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_D.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="SynEdit_R">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_R.dproj"/>
+    </Target>
+    <Target Name="SynEdit_R:Clean">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_R.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="SynEdit_R:Make">
+        <MSBuild Projects="..\..\components\synedit\Packages\Delphi10.4\SynEdit_R.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="heidisql;SynEdit_D;SynEdit_R"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="heidisql:Clean;SynEdit_D:Clean;SynEdit_R:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="heidisql:Make;SynEdit_D:Make;SynEdit_R:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

@@ -9,6 +9,9 @@
         <Projects Include="SynEdit_D.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\..\..\..\packages\Delphi10.4\heidisql.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="SynEdit_D:Make">
         <MSBuild Projects="SynEdit_D.dproj" Targets="Make"/>
     </Target>
+    <Target Name="heidisql">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj"/>
+    </Target>
+    <Target Name="heidisql:Clean">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="heidisql:Make">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="SynEdit_R;SynEdit_D"/>
+        <CallTarget Targets="SynEdit_R;SynEdit_D;heidisql"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="SynEdit_R:Clean;SynEdit_D:Clean"/>
+        <CallTarget Targets="SynEdit_R:Clean;SynEdit_D:Clean;heidisql:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="SynEdit_R:Make;SynEdit_D:Make"/>
+        <CallTarget Targets="SynEdit_R:Make;SynEdit_D:Make;heidisql:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

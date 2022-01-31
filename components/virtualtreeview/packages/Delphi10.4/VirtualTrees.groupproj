@@ -9,6 +9,9 @@
         <Projects Include="VirtualTreesD.dproj">
             <Dependencies>VirtualTreesR.dproj</Dependencies>
         </Projects>
+        <Projects Include="..\..\..\..\packages\Delphi10.4\heidisql.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="VirtualTreesD:Make" DependsOnTargets="VirtualTreesR:Make">
         <MSBuild Projects="VirtualTreesD.dproj" Targets="Make"/>
     </Target>
+    <Target Name="heidisql">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj"/>
+    </Target>
+    <Target Name="heidisql:Clean">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="heidisql:Make">
+        <MSBuild Projects="..\..\..\..\packages\Delphi10.4\heidisql.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="VirtualTreesR;VirtualTreesD"/>
+        <CallTarget Targets="VirtualTreesR;VirtualTreesD;heidisql"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="VirtualTreesR:Clean;VirtualTreesD:Clean"/>
+        <CallTarget Targets="VirtualTreesR:Clean;VirtualTreesD:Clean;heidisql:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="VirtualTreesR:Make;VirtualTreesD:Make"/>
+        <CallTarget Targets="VirtualTreesR:Make;VirtualTreesD:Make;heidisql:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
