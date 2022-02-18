@@ -73,7 +73,7 @@
         <DCCReference Include="vclx.dcp"/>
         <DCCReference Include="designide.dcp"/>
         <DCCReference Include="..\Source\SynEditReg.pas"/>
-        <DCCReference Include="..\Source\SynEditPropertyReg.pas"/>
+        <DCCReference Include="Source\SynEditPropertyReg.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -96,9 +96,6 @@
                 </Source>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="Android">False</Platform>
-                <Platform value="iOSDevice32">False</Platform>
-                <Platform value="iOSSimulator">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>

@@ -1,5 +1,4 @@
 program heidisql;
-
 uses
   madExcept,
   Forms,

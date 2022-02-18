@@ -9,10 +9,10 @@ WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
 the specific language governing rights and limitations under the License.
 
 Code template generated with SynGen.
-The original code is: D:\Quellen\Komponenten\SynEdit\Demos\HighlighterDemo\SynHighlighterSample.pas, released 2008-10-25.
-Description: 
-The initial author of this file is Maël Hörz.
-Copyright (c) 2008, all rights reserved.
+The original code is: SynHighlighterSample.pas, released 2001-12-25.
+Description: Syntax Parser/Highlighter
+The initial author of this file is pp.
+Copyright (c) 2001, all rights reserved.
 
 Contributors to the SynEdit and mwEdit projects are listed in the
 Contributors.txt file.
@@ -27,35 +27,32 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: SynHighlighterSample.pas,v 1.6.2.13 2008/10/25 23:30:31 maelh Exp $
+$Id: SynHighlighterSample.pas,v 1.6 2001/12/27 10:57:38 plpolak Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
 
 -------------------------------------------------------------------------------}
 
-{$IFNDEF QSYNHIGHLIGHTERSAMPLE}
 unit SynHighlighterSample;
-{$ENDIF}
 
 {$I SynEdit.inc}
 
 interface
 
 uses
-{$IFDEF SYN_CLX}
-  QGraphics,
-  QSynEditTypes,
-  QSynEditHighlighter,
-  QSynUnicode,
-{$ELSE}
-  Graphics,
-  SynEditTypes,
-  SynEditHighlighter,
-  SynUnicode,
-{$ENDIF}
   SysUtils,
-  Classes;
+  Classes,
+{$IFDEF SYN_CLX}
+  QControls,
+  QGraphics,
+{$ELSE}
+  Windows,
+  Controls,
+  Graphics,
+{$ENDIF}
+  SynEditTypes,
+  SynEditHighlighter;
 
 type
   TtkTokenKind = (
@@ -73,29 +70,41 @@ type
   TProcTableProc = procedure of object;
 
   PIdentFuncTableFunc = ^TIdentFuncTableFunc;
-  TIdentFuncTableFunc = function (Index: Integer): TtkTokenKind of object;
+  TIdentFuncTableFunc = function: TtkTokenKind of object;
+
+const
+  MaxKey = 96;
 
 type
   TSynSampleSyn = class(TSynCustomHighlighter)
   private
+    fLine: PChar;
+    fLineNumber: Integer;
+    fProcTable: array[#0..#255] of TProcTableProc;
     fRange: TRangeState;
+    Run: LongInt;
+    fStringLen: Integer;
+    fToIdent: PChar;
+    fTokenPos: Integer;
     fTokenID: TtkTokenKind;
-    fIdentFuncTable: array[0..2] of TIdentFuncTableFunc;
+    fIdentFuncTable: array[0 .. MaxKey] of TIdentFuncTableFunc;
     fCommentAttri: TSynHighlighterAttributes;
     fIdentifierAttri: TSynHighlighterAttributes;
     fKeyAttri: TSynHighlighterAttributes;
     fSpaceAttri: TSynHighlighterAttributes;
     fStringAttri: TSynHighlighterAttributes;
     fTestAttri: TSynHighlighterAttributes;
-    function HashKey(Str: PWideChar): Cardinal;
-    function FuncHello(Index: Integer): TtkTokenKind;
-    function FuncSynedit(Index: Integer): TtkTokenKind;
-    function FuncWorld(Index: Integer): TtkTokenKind;
+    function KeyHash(ToHash: PChar): Integer;
+    function KeyComp(const aKey: string): Boolean;
+    function Func52: TtkTokenKind;
+    function Func72: TtkTokenKind;
+    function Func96: TtkTokenKind;
     procedure IdentProc;
     procedure UnknownProc;
-    function AltFunc(Index: Integer): TtkTokenKind;
+    function AltFunc: TtkTokenKind;
     procedure InitIdent;
-    function IdentKind(MayBe: PWideChar): TtkTokenKind;
+    function IdentKind(MayBe: PChar): TtkTokenKind;
+    procedure MakeMethodTables;
     procedure NullProc;
     procedure SpaceProc;
     procedure CRProc;
@@ -107,22 +116,25 @@ type
     procedure StringOpenProc;
     procedure StringProc;
   protected
-    function GetSampleSource: UnicodeString; override;
+    function GetIdentChars: TSynIdentChars; override;
+    function GetSampleSource: string; override;
     function IsFilterStored: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
-    class function GetFriendlyLanguageName: UnicodeString; override;
-    class function GetLanguageName: string; override;
+    {$IFNDEF SYN_CPPB_1} class {$ENDIF}
+    function GetLanguageName: string; override;
     function GetRange: Pointer; override;
     procedure ResetRange; override;
     procedure SetRange(Value: Pointer); override;
-    function GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes; override;
-    function GetEol: Boolean; override;
-    function GetKeyWords(TokenKind: Integer): UnicodeString; override;
+    function GetDefaultAttribute(Index: integer): TSynHighlighterAttributes; override;
+    function GetEOL: Boolean; override;
+    function GetKeyWords: string;
     function GetTokenID: TtkTokenKind;
+    procedure SetLine(NewValue: String; LineNumber: Integer); override;
+    function GetToken: String; override;
     function GetTokenAttribute: TSynHighlighterAttributes; override;
-    function GetTokenKind: Integer; override;
-    function IsIdentChar(AChar: WideChar): Boolean; override;
+    function GetTokenKind: integer; override;
+    function GetTokenPos: Integer; override;
     procedure Next; override;
   published
     property CommentAttri: TSynHighlighterAttributes read fCommentAttri write fCommentAttri;
@@ -136,108 +148,156 @@ type
 implementation
 
 uses
-{$IFDEF SYN_CLX}
-  QSynEditStrConst;
-{$ELSE}
   SynEditStrConst;
-{$ENDIF}
 
+{$IFDEF SYN_COMPILER_3_UP}
 resourcestring
-  SYNS_FilterTest = 'All files (*.*)|*.*';
-  SYNS_LangTest = 'Test';
-  SYNS_FriendlyLangTest = 'Test';
-  SYNS_AttrTest = 'Test';
-  SYNS_FriendlyAttrTest = 'Test';
-
+{$ELSE}
 const
-  // as this language is case-insensitive keywords *must* be in lowercase
-  KeyWords: array[0..2] of UnicodeString = (
-    'hello', 'synedit', 'world' 
-  );
+{$ENDIF}
+  SYNS_FilterSamplelanguage = 'All files (*.*)|*.*';
+  SYNS_LangSamplelanguage = 'Sample language';
+  SYNS_AttrTest = 'Test';
 
-  KeyIndices: array[0..2] of Integer = (
-    0, 2, 1 
-  );
+var
+  Identifiers: array[#0..#255] of ByteBool;
+  mHashTable : array[#0..#255] of Integer;
+
+procedure MakeIdentTable;
+var
+  I, J: Char;
+begin
+  for I := #0 to #255 do
+  begin
+    case I of
+      '_', 'a'..'z', 'A'..'Z': Identifiers[I] := True;
+    else
+      Identifiers[I] := False;
+    end;
+    J := UpCase(I);
+    case I in ['_', 'A'..'Z', 'a'..'z'] of
+      True: mHashTable[I] := Ord(J) - 64
+    else
+      mHashTable[I] := 0;
+    end;
+  end;
+end;
 
 procedure TSynSampleSyn.InitIdent;
 var
-  i: Integer;
+  I: Integer;
+  pF: PIdentFuncTableFunc;
 begin
-  for i := Low(fIdentFuncTable) to High(fIdentFuncTable) do
-    if KeyIndices[i] = -1 then
-      fIdentFuncTable[i] := AltFunc;
-
-  fIdentFuncTable[0] := FuncHello;
-  fIdentFuncTable[2] := FuncSynedit;
-  fIdentFuncTable[1] := FuncWorld;
+  pF := PIdentFuncTableFunc(@fIdentFuncTable);
+  for I := Low(fIdentFuncTable) to High(fIdentFuncTable) do
+  begin
+    pF^ := AltFunc;
+    Inc(pF);
+  end;
+  fIdentFuncTable[52] := Func52;
+  fIdentFuncTable[72] := Func72;
+  fIdentFuncTable[96] := Func96;
 end;
 
-{$Q-}
-function TSynSampleSyn.HashKey(Str: PWideChar): Cardinal;
+function TSynSampleSyn.KeyHash(ToHash: PChar): Integer;
 begin
   Result := 0;
-  while IsIdentChar(Str^) do
+  while ToHash^ in ['_', 'a'..'z', 'A'..'Z'] do
   begin
-    Result := Result * 3 + Ord(Str^);
-    inc(Str);
+    inc(Result, mHashTable[ToHash^]);
+    inc(ToHash);
   end;
-  Result := Result mod 3;
-  fStringLen := Str - fToIdent;
+  fStringLen := ToHash - fToIdent;
 end;
-{$Q+}
 
-function TSynSampleSyn.FuncHello(Index: Integer): TtkTokenKind;
+function TSynSampleSyn.KeyComp(const aKey: String): Boolean;
+var
+  I: Integer;
+  Temp: PChar;
 begin
-  if IsCurrentToken(KeyWords[Index]) then
-    Result := tkKey
+  Temp := fToIdent;
+  if Length(aKey) = fStringLen then
+  begin
+    Result := True;
+    for i := 1 to fStringLen do
+    begin
+      if mHashTable[Temp^] <> mHashTable[aKey[i]] then
+      begin
+        Result := False;
+        break;
+      end;
+      inc(Temp);
+    end;
+  end
   else
-    Result := tkIdentifier;
+    Result := False;
 end;
 
-function TSynSampleSyn.FuncSynedit(Index: Integer): TtkTokenKind;
+function TSynSampleSyn.Func52: TtkTokenKind;
 begin
-  if IsCurrentToken(KeyWords[Index]) then
-    Result := tkTest
-  else
-    Result := tkIdentifier;
+  if KeyComp('Hello') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynSampleSyn.FuncWorld(Index: Integer): TtkTokenKind;
+function TSynSampleSyn.Func72: TtkTokenKind;
 begin
-  if IsCurrentToken(KeyWords[Index]) then
-    Result := tkKey
-  else
-    Result := tkIdentifier;
+  if KeyComp('World') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynSampleSyn.AltFunc(Index: Integer): TtkTokenKind;
+function TSynSampleSyn.Func96: TtkTokenKind;
+begin
+  if KeyComp('SynEdit') then Result := tkTest else Result := tkIdentifier;
+end;
+
+function TSynSampleSyn.AltFunc: TtkTokenKind;
 begin
   Result := tkIdentifier;
 end;
 
-function TSynSampleSyn.IdentKind(MayBe: PWideChar): TtkTokenKind;
+function TSynSampleSyn.IdentKind(MayBe: PChar): TtkTokenKind;
 var
-  Key: Cardinal;
+  HashKey: Integer;
 begin
   fToIdent := MayBe;
-  Key := HashKey(MayBe);
-  if Key <= High(fIdentFuncTable) then
-    Result := fIdentFuncTable[Key](KeyIndices[Key])
+  HashKey := KeyHash(MayBe);
+  if HashKey <= MaxKey then
+    Result := fIdentFuncTable[HashKey]
   else
     Result := tkIdentifier;
 end;
 
+procedure TSynSampleSyn.MakeMethodTables;
+var
+  I: Char;
+begin
+  for I := #0 to #255 do
+    case I of
+      #0: fProcTable[I] := NullProc;
+      #10: fProcTable[I] := LFProc;
+      #13: fProcTable[I] := CRProc;
+      '{': fProcTable[I] := BraceCommentOpenProc;
+      '/': fProcTable[I] := CStyleCommentOpenProc;
+      '"': fProcTable[I] := StringOpenProc;
+      #1..#9,
+      #11,
+      #12,
+      #14..#32 : fProcTable[I] := SpaceProc;
+      'A'..'Z', 'a'..'z', '_': fProcTable[I] := IdentProc;
+    else
+      fProcTable[I] := UnknownProc;
+    end;
+end;
+
 procedure TSynSampleSyn.SpaceProc;
 begin
-  inc(Run);
   fTokenID := tkSpace;
-  while (FLine[Run] <= #32) and not IsLineEnd(Run) do inc(Run);
+  repeat
+    inc(Run);
+  until not (fLine[Run] in [#1..#32]);
 end;
 
 procedure TSynSampleSyn.NullProc;
 begin
   fTokenID := tkNull;
-  inc(Run);
 end;
 
 procedure TSynSampleSyn.CRProc;
@@ -258,6 +318,7 @@ procedure TSynSampleSyn.BraceCommentOpenProc;
 begin
   Inc(Run);
   fRange := rsBraceComment;
+  BraceCommentProc;
   fTokenID := tkComment;
 end;
 
@@ -277,9 +338,9 @@ begin
           fRange := rsUnKnown;
           Break;
         end;
-        if not IsLineEnd(Run) then
+        if not (fLine[Run] in [#0, #10, #13]) then
           Inc(Run);
-      until IsLineEnd(Run);
+      until fLine[Run] in [#0, #10, #13];
     end;
   end;
 end;
@@ -289,8 +350,8 @@ begin
   Inc(Run);
   if (fLine[Run] = '*') then
   begin
-    Inc(Run, 1);
     fRange := rsCStyleComment;
+    CStyleCommentProc;
     fTokenID := tkComment;
   end
   else
@@ -314,9 +375,9 @@ begin
           fRange := rsUnKnown;
           Break;
         end;
-        if not IsLineEnd(Run) then
+        if not (fLine[Run] in [#0, #10, #13]) then
           Inc(Run);
-      until IsLineEnd(Run);
+      until fLine[Run] in [#0, #10, #13];
     end;
   end;
 end;
@@ -339,36 +400,34 @@ begin
       fRange := rsUnKnown;
       Break;
     end;
-    if not IsLineEnd(Run) then
+    if not (fLine[Run] in [#0, #10, #13]) then
       Inc(Run);
-  until IsLineEnd(Run);
+  until fLine[Run] in [#0, #10, #13];
 end;
 
 constructor TSynSampleSyn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  fCaseSensitive := False;
-
-  fCommentAttri := TSynHighLighterAttributes.Create(SYNS_AttrComment, SYNS_FriendlyAttrComment);
+  fCommentAttri := TSynHighLighterAttributes.Create(SYNS_AttrComment);
   fCommentAttri.Style := [fsItalic];
   fCommentAttri.Foreground := clNavy;
   AddAttribute(fCommentAttri);
 
-  fIdentifierAttri := TSynHighLighterAttributes.Create(SYNS_AttrIdentifier, SYNS_FriendlyAttrIdentifier);
+  fIdentifierAttri := TSynHighLighterAttributes.Create(SYNS_AttrIdentifier);
   AddAttribute(fIdentifierAttri);
 
-  fKeyAttri := TSynHighLighterAttributes.Create(SYNS_AttrReservedWord, SYNS_FriendlyAttrReservedWord);
+  fKeyAttri := TSynHighLighterAttributes.Create(SYNS_AttrReservedWord);
   fKeyAttri.Style := [fsBold];
   AddAttribute(fKeyAttri);
 
-  fSpaceAttri := TSynHighLighterAttributes.Create(SYNS_AttrSpace, SYNS_FriendlyAttrSpace);
+  fSpaceAttri := TSynHighLighterAttributes.Create(SYNS_AttrSpace);
   AddAttribute(fSpaceAttri);
 
-  fStringAttri := TSynHighLighterAttributes.Create(SYNS_AttrString, SYNS_FriendlyAttrString);
+  fStringAttri := TSynHighLighterAttributes.Create(SYNS_AttrString);
   fStringAttri.Foreground := clRed;
   AddAttribute(fStringAttri);
 
-  fTestAttri := TSynHighLighterAttributes.Create(SYNS_AttrTest, SYNS_FriendlyAttrTest);
+  fTestAttri := TSynHighLighterAttributes.Create(SYNS_AttrTest);
   fTestAttri.Style := [fsUnderline, fsItalic];
   fTestAttri.Foreground := clBlue;
   fTestAttri.Background := clSilver;
@@ -376,20 +435,34 @@ begin
 
   SetAttributesOnChange(DefHighlightChange);
   InitIdent;
-  fDefaultFilter := SYNS_FilterTest;
+  MakeMethodTables;
+  fDefaultFilter := SYNS_FilterSamplelanguage;
   fRange := rsUnknown;
+end;
+
+procedure TSynSampleSyn.SetLine(NewValue: String; LineNumber: Integer);
+begin
+  fLine := PChar(NewValue);
+  Run := 0;
+  fLineNumber := LineNumber;
+  Next;
 end;
 
 procedure TSynSampleSyn.IdentProc;
 begin
-  fTokenID := IdentKind(fLine + Run);
+  fTokenID := IdentKind((fLine + Run));
   inc(Run, fStringLen);
-  while IsIdentChar(fLine[Run]) do
+  while Identifiers[fLine[Run]] do
     Inc(Run);
 end;
 
 procedure TSynSampleSyn.UnknownProc;
 begin
+{$IFDEF SYN_MBCSSUPPORT}
+  if FLine[Run] in LeadBytes then
+    Inc(Run,2)
+  else
+{$ENDIF}
   inc(Run);
   fTokenID := tkUnknown;
 end;
@@ -401,44 +474,43 @@ begin
     rsBraceComment: BraceCommentProc;
     rsCStyleComment: CStyleCommentProc;
   else
-    case fLine[Run] of
-      #0: NullProc;
-      #10: LFProc;
-      #13: CRProc;
-      '{': BraceCommentOpenProc;
-      '/': CStyleCommentOpenProc;
-      '"': StringOpenProc;
-      #1..#9, #11, #12, #14..#32: SpaceProc;
-      'A'..'Z', 'a'..'z', '_': IdentProc;
-    else
-      UnknownProc;
+    begin
+      fRange := rsUnknown;
+      fProcTable[fLine[Run]];
     end;
   end;
-  inherited;
 end;
 
-function TSynSampleSyn.GetDefaultAttribute(Index: Integer): TSynHighLighterAttributes;
+function TSynSampleSyn.GetDefaultAttribute(Index: integer): TSynHighLighterAttributes;
 begin
   case Index of
-    SYN_ATTR_COMMENT: Result := fCommentAttri;
-    SYN_ATTR_IDENTIFIER: Result := fIdentifierAttri;
-    SYN_ATTR_KEYWORD: Result := fKeyAttri;
-    SYN_ATTR_STRING: Result := fStringAttri;
-    SYN_ATTR_WHITESPACE: Result := fSpaceAttri;
+    SYN_ATTR_COMMENT    : Result := fCommentAttri;
+    SYN_ATTR_IDENTIFIER : Result := fIdentifierAttri;
+    SYN_ATTR_KEYWORD    : Result := fKeyAttri;
+    SYN_ATTR_STRING     : Result := fStringAttri;
+    SYN_ATTR_WHITESPACE : Result := fSpaceAttri;
   else
     Result := nil;
   end;
 end;
 
-function TSynSampleSyn.GetEol: Boolean;
+function TSynSampleSyn.GetEOL: Boolean;
 begin
-  Result := Run = fLineLen + 1;
+  Result := fTokenID = tkNull;
 end;
 
-function TSynSampleSyn.GetKeyWords(TokenKind: Integer): UnicodeString;
+function TSynSampleSyn.GetKeyWords: string;
 begin
   Result := 
     'Hello,SynEdit,World';
+end;
+
+function TSynSampleSyn.GetToken: String;
+var
+  Len: LongInt;
+begin
+  Len := Run - fTokenPos;
+  SetString(Result, (FLine + fTokenPos), Len);
 end;
 
 function TSynSampleSyn.GetTokenID: TtkTokenKind;
@@ -461,46 +533,42 @@ begin
   end;
 end;
 
-function TSynSampleSyn.GetTokenKind: Integer;
+function TSynSampleSyn.GetTokenKind: integer;
 begin
   Result := Ord(fTokenId);
 end;
 
-function TSynSampleSyn.IsIdentChar(AChar: WideChar): Boolean;
+function TSynSampleSyn.GetTokenPos: Integer;
 begin
-  case AChar of
-    '_', '0'..'9', 'a'..'z', 'A'..'Z':
-      Result := True;
-    else
-      Result := False;
-  end;
+  Result := fTokenPos;
 end;
 
-function TSynSampleSyn.GetSampleSource: UnicodeString;
+function TSynSampleSyn.GetIdentChars: TSynIdentChars;
 begin
-  Result := 
-    '{ Sample source for the demo highlighter }'#13#10 +
-    #13#10 +
-    'This highlighter will recognize the words Hello and'#13#10 +
-    'World as keywords. It will also highlight "Strings".'#13#10 +
-    #13#10 +
-    'And a special keyword type: SynEdit'#13#10 +
-    '/* This style of comments is also highlighted */';
+  Result := ['_', 'a'..'z', 'A'..'Z'];
+end;
+
+function TSynSampleSyn.GetSampleSource: string;
+begin
+  Result := '{ Sample source for the demo highlighter }'#13#10 +
+            #13#10 +
+            'This highlighter will recognize the words Hello and'#13#10 +
+            'World as keywords. It will also highlight "Strings".'#13#10 +
+            #13#10 +
+            'And a special keyword type: SynEdit'#13#10 +
+            #13#10 +
+            '/* This style of comments is also highlighted */';
 end;
 
 function TSynSampleSyn.IsFilterStored: Boolean;
 begin
-  Result := fDefaultFilter <> SYNS_FilterTest;
+  Result := fDefaultFilter <> SYNS_FilterSamplelanguage;
 end;
 
-class function TSynSampleSyn.GetFriendlyLanguageName: UnicodeString;
+{$IFNDEF SYN_CPPB_1} class {$ENDIF}
+function TSynSampleSyn.GetLanguageName: string;
 begin
-  Result := SYNS_FriendlyLangTest;
-end;
-
-class function TSynSampleSyn.GetLanguageName: string;
-begin
-  Result := SYNS_LangTest;
+  Result := SYNS_LangSamplelanguage;
 end;
 
 procedure TSynSampleSyn.ResetRange;
@@ -519,6 +587,7 @@ begin
 end;
 
 initialization
+  MakeIdentTable;
 {$IFNDEF SYN_CPPB_1}
   RegisterPlaceableHighlighter(TSynSampleSyn);
 {$ENDIF}

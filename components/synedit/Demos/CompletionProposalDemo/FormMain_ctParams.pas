@@ -14,7 +14,7 @@ type
     scpParams: TSynCompletionProposal;
     FontDialog1: TFontDialog;
     procedure scpParamsExecute(Kind: SynCompletionType; Sender: TObject;
-      var AString: UnicodeString; var x, y: Integer; var CanExecute: Boolean);
+      var AString: String; var x, y: Integer; var CanExecute: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -36,8 +36,8 @@ uses SynEditTypes;
 {$R *.DFM}
 
 procedure TForm1.scpParamsExecute(Kind: SynCompletionType; Sender: TObject;
-  var AString: UnicodeString; var x, y: Integer; var CanExecute: Boolean);
-var locline, lookup: UnicodeString;
+  var AString: String; var x, y: Integer; var CanExecute: Boolean);
+var locline, lookup: String;
     TmpX, savepos, StartX,
     ParenCounter,
     TmpLocation    : Integer;
@@ -89,12 +89,12 @@ begin
       begin
         //we have a valid open paren, lets see what the word before it is
         StartX := TmpX;
-        while (TmpX > 0) and not SynEdit1.IsIdentChar(locLine[TmpX])do
+        while (TmpX > 0) and not(locLine[TmpX] in TSynValidStringChars) do
           Dec(TmpX);
         if TmpX > 0 then
         begin
           SavePos := TmpX;
-          While (TmpX > 0) and SynEdit1.IsIdentChar(locLine[TmpX]) do
+          While (TmpX > 0) and (locLine[TmpX] in TSynValidStringChars) do
             dec(TmpX);
           inc(TmpX);
           lookup := Uppercase(Copy(LocLine, TmpX, SavePos - TmpX + 1));

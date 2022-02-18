@@ -24,9 +24,9 @@ CHARS
 
 'A'..'Z', 'a'..'z', '_':: Ident
 BeginProc
-  fTokenID := IdentKind(fLine + Run);
+  fTokenID := IdentKind((fLine + Run));
   inc(Run, fStringLen);
-  while IsIdentChar(fLine[Run]) do
+  while Identifiers[fLine[Run]] do
     Inc(Run);
 EndProc
 

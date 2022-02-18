@@ -46,6 +46,7 @@ object frmTextEditor: TfrmTextEditor
       Caption = 'lblTextLength'
       ParentBiDiMode = False
       Layout = tlCenter
+      ExplicitHeight = 14
     end
     object tlbStandard: TToolBar
       Left = 0
@@ -147,7 +148,6 @@ object frmTextEditor: TfrmTextEditor
     Top = 0
     Width = 484
     Height = 139
-    SingleLineMode = False
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -181,6 +181,11 @@ object frmTextEditor: TfrmTextEditor
     WantTabs = True
     OnChange = MemoTextChange
     FontSmoothing = fsmNone
+    RemovedKeystrokes = <>
+    AddedKeystrokes = <
+      item
+        Command = ecNone
+      end>
   end
   object popupLinebreaks: TPopupMenu
     Images = MainForm.VirtualImageListMain

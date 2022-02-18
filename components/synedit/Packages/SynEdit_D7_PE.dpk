@@ -24,7 +24,7 @@ package SynEdit_D7_PE;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 {$DEFINE SYN_DELPHI_PE}
 
 requires

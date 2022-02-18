@@ -1,5 +1,7 @@
 package SynEdit_R2005;
 
+{ $Id: SynEdit_R2005.dpk,v 1.1 2004/12/07 21:13:16 plpolak Exp $ }
+
 {$R *.res}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -29,8 +31,7 @@ package SynEdit_R2005;
 requires
   vcl,
   vcldb,
-  vclx,
-  rtl;
+  vclx;
 
 contains
   SynTextDrawer in '..\Source\SynTextDrawer.pas',
@@ -122,13 +123,12 @@ contains
   SynMacroRecorder in '..\Source\SynMacroRecorder.pas',
   SynMemo in '..\Source\SynMemo.pas',
   SynRegExpr in '..\Source\SynRegExpr.pas',
-  SynHighlighterCss in '..\Source\SynHighlighterCss.pas',
+  SynHighlighterCSS in '..\Source\SynHighlighterCss.pas',
   SynHighlighterLDraw in '..\Source\SynHighlighterLDraw.pas',
   SynHighlighterURI in '..\Source\SynHighlighterURI.pas',
   SynURIOpener in '..\Source\SynURIOpener.pas',
   SynHighlighterDOT in '..\Source\SynHighlighterDOT.pas',
   SynHighlighterVrml97 in '..\Source\SynHighlighterVrml97.pas',
-  SynHighlighterEiffel in '..\Source\SynHighlighterEiffel.pas',
-  SynUnicode in '..\Source\SynUnicode.pas';
+  SynHighlighterEiffel in '..\Source\SynHighlighterEiffel.pas';
 
 end.

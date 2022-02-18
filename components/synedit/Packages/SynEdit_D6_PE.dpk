@@ -24,7 +24,7 @@ package SynEdit_D6_PE;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 {$DEFINE SYN_DELPHI_PE}
 
 requires
@@ -33,7 +33,6 @@ requires
 
 contains
   SynEditReg in '..\Source\SynEditReg.pas',
-  SynEditPropertyReg in '..\Source\SynEditPropertyReg.pas',
-  SynHighlighterManager in '..\Source\SynHighlighterManager.pas';
+  SynEditPropertyReg in '..\Source\SynEditPropertyReg.pas';
 
 end.

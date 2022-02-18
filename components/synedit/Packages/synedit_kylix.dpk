@@ -24,7 +24,7 @@ package synedit_kylix;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit package for Kylix'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   rtl,
@@ -132,6 +132,6 @@ contains
   QSynMacroRecorder in '../Source/QSynMacroRecorder.pas',
   QSynMemo in '../Source/QSynMemo.pas',
   QSynRegExpr in '../Source/QSynRegExpr.pas',
-  QSynURIOpener in '../Source/QSynURIOpener.pas',
-  QSynUnicode in '../Source/QSynUnicode.pas';
+  QSynURIOpener in '../Source/QSynURIOpener.pas';
+
 end.

@@ -24,7 +24,7 @@ package SynEdit_D7_CLX;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit CLX component suite'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 {$DEFINE SYN_CLX}
 
 requires
@@ -34,7 +34,6 @@ requires
 
 contains
   QSynEditReg in '..\Source\QSynEditReg.pas',
-  QSynEditPropertyReg in '..\Source\QSynEditPropertyReg.pas',
-  QSynUnicode in '..\Source\QSynUnicode.pas';
+  QSynEditPropertyReg in '..\Source\QSynEditPropertyReg.pas';
 
 end.

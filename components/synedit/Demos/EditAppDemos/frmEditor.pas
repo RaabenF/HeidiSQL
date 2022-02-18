@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: frmEditor.pas,v 1.5.2.2 2008/09/14 16:24:57 maelh Exp $
+$Id: frmEditor.pas,v 1.6 2004/11/10 13:03:12 maelh Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -43,7 +43,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Menus,
   uEditAppIntfs, SynEdit, SynEditTypes, SynEditMiscProcs,
-  SynEditMiscClasses, SynEditSearch, SynUnicode;
+  SynEditMiscClasses, SynEditSearch;
 
 type
   TEditorKind = (ekBorderless, ekInTabsheet, ekMDIChild);
@@ -73,7 +73,7 @@ type
     procedure SynEditorEnter(Sender: TObject);
     procedure SynEditorExit(Sender: TObject);
     procedure SynEditorReplaceText(Sender: TObject; const ASearch,
-      AReplace: UnicodeString; Line, Column: Integer;
+      AReplace: String; Line, Column: Integer;
       var Action: TSynReplaceAction);
     procedure SynEditorStatusChange(Sender: TObject;
       Changes: TSynStatusChanges);
@@ -673,7 +673,7 @@ begin
 end;
 
 procedure TEditorForm.SynEditorReplaceText(Sender: TObject; const ASearch,
-  AReplace: UnicodeString; Line, Column: Integer; var Action: TSynReplaceAction);
+  AReplace: String; Line, Column: Integer; var Action: TSynReplaceAction);
 var
   APos: TPoint;
   EditRect: TRect;

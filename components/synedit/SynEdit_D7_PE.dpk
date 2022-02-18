@@ -34,6 +34,6 @@ requires
 
 contains
   SynEditReg in '..\Source\SynEditReg.pas',
-  SynEditPropertyReg in '..\Source\SynEditPropertyReg.pas';
+  SynEditPropertyReg in 'Source\SynEditPropertyReg.pas';
 
 end.

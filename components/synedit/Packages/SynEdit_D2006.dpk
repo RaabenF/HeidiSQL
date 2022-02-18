@@ -1,5 +1,7 @@
 package SynEdit_D2006;
 
+{ $Id: SynEdit_D2006.dpk,v 1.1 2005/12/31 07:34:36 skyweb Exp $ }
+
 {$R *.res}
 {$R '..\Source\SynEditReg.dcr'}
 {$ALIGN 8}
@@ -25,7 +27,7 @@ package SynEdit_D2006;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite'}
 {$DESIGNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   designide,

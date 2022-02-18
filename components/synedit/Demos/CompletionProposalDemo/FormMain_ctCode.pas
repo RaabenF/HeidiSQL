@@ -29,6 +29,7 @@ type
     edBiggestWord: TEdit;
     Label3: TLabel;
     cbCase: TCheckBox;
+    cbAnsi: TCheckBox;
     cbPrettyText: TCheckBox;
     cbUseInsertList: TCheckBox;
     cbLimitToMatchedText: TCheckBox;
@@ -121,6 +122,7 @@ begin
     begin
       Case TCheckBox(Sender).Tag of
         cCaseSensitive : scpDemo.Options := scpDemo.Options + [scoCaseSensitive];
+        cAnsiStrings   : scpDemo.Options := scpDemo.Options + [scoAnsiStrings];
         cPrettyText    : scpDemo.Options := scpDemo.Options + [scoUsePrettyText];
         cInsertList    : scpDemo.Options := scpDemo.Options + [scoUseInsertList];
         cMatchedText   : scpDemo.Options := scpDemo.Options + [scoLimitToMatchedText];
@@ -128,6 +130,7 @@ begin
     end else begin
       Case TCheckBox(Sender).Tag of
         cCaseSensitive : scpDemo.Options := scpDemo.Options - [scoCaseSensitive];
+        cAnsiStrings   : scpDemo.Options := scpDemo.Options - [scoAnsiStrings];
         cPrettyText    : scpDemo.Options := scpDemo.Options - [scoUsePrettyText];
         cInsertList    : scpDemo.Options := scpDemo.Options - [scoUseInsertList];
         cMatchedText   : scpDemo.Options := scpDemo.Options - [scoLimitToMatchedText];

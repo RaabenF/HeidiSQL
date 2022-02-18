@@ -18,3 +18,6 @@ __recovery
 *.po
 *.res
 out/Backups/*
+components/SynEdit-2_0_8.zip
+components/SynEdit-2_0_7.zip
+components/SynEdit-2_0_6.zip

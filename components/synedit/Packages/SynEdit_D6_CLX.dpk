@@ -1,5 +1,7 @@
 package SynEdit_D6_CLX;
 
+{ $Id: SynEdit_D6_CLX.dpk,v 1.9 2004/06/12 16:33:21 markonjezic Exp $ }
+
 {$R *.res}
 {$R '..\Source\SynEditReg.dcr'}
 {$ALIGN 8}
@@ -24,14 +26,13 @@ package SynEdit_D6_CLX;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit CLX component suite'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 {$DEFINE SYN_CLX}
 
 requires
   visualclx,
   visualdbclx,
-  designide,
-  SynEdit_R6;
+  designide;
 
 contains
   QSynEditReg in '..\Source\QSynEditReg.pas',
@@ -130,9 +131,6 @@ contains
   QSynMemo in '..\Source\QSynMemo.pas',
   QSynRegExpr in '..\Source\QSynRegExpr.pas',
   kTextDrawer in '..\Source\kTextDrawer.pas',
-  QSynEditPropertyReg in '..\Source\QSynEditPropertyReg.pas',
-  QSynUnicode in '..\Source\QSynUnicode.pas',
-  QSynHighlighterEiffel in '..\Source\QSynHighlighterEiffel.pas',
-  QSynHighlighterRC in '..\Source\QSynHighlighterRC.pas';
+  QSynEditPropertyReg in '..\Source\QSynEditPropertyReg.pas';
 
 end.

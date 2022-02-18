@@ -24,7 +24,7 @@ package SynEdit_R5;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite runtime'}
 {$RUNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   vcl50,
@@ -127,7 +127,6 @@ contains
   SynHighlighterVrml97 in '..\Source\SynHighlighterVrml97.pas',
   SynHighlighterXML in '..\Source\SynHighlighterXML.pas',
   SynHighlighterLDraw in '..\Source\SynHighlighterLDraw.pas',
-  SynHighlighterURI in '..\Source\SynHighlighterURI.pas',
-  SynUnicode in '..\Source\SynUnicode.pas';
+  SynHighlighterURI in '..\Source\SynHighlighterURI.pas';
 
 end.

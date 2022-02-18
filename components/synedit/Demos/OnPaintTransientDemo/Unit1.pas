@@ -37,20 +37,10 @@ implementation
 
 procedure TForm1.EditorPaintTransient(Sender: TObject; Canvas: TCanvas;
   TransientType: TTransientType);
-
-var Editor : TSynEdit;
-    OpenChars: array of WideChar;//[0..2] of WideChar=();
-    CloseChars: array of WideChar;//[0..2] of WideChar=();
-
-  function IsCharBracket(AChar: WideChar): Boolean;
-  begin
-    case AChar of
-      '{','[','(','<','}',']',')','>':
-        Result := True;
-      else
-        Result := False;
-    end;
-  end;
+const AllBrackets = ['{','[','(','<','}',']',')','>'];
+var Editor: TSynEdit;
+    OpenChars: array[0..2] of Char;
+    CloseChars: array[0..2] of Char;
 
   function CharToPixels(P: TBufferCoord): TPoint;
   begin
@@ -60,27 +50,22 @@ var Editor : TSynEdit;
 var P: TBufferCoord;
     Pix: TPoint;
     D     : TDisplayCoord;
-    S: UnicodeString;
+    S: String;
     I: Integer;
     Attri: TSynHighlighterAttributes;
-    ArrayLength: Integer;
     start: Integer;
-    TmpCharA, TmpCharB: WideChar;
+    TmpCharA, TmpCharB: Char;
 begin
   if TSynEdit(Sender).SelAvail then exit;
   Editor := TSynEdit(Sender);
-  ArrayLength:= 3;
-//if you had a highlighter that used a markup language, like html or xml,
-//then you would want to highlight the greater and less than signs
-//as illustrated below
+//if you had a highlighter that used a markup language, like html or xml, then you would want to highlight
+//the greater and less than signs as well as illustrated below
 
 //  if (Editor.Highlighter = shHTML) or (Editor.Highlighter = shXML) then
 //    inc(ArrayLength);
 
-  SetLength(OpenChars, ArrayLength);
-  SetLength(CloseChars, ArrayLength);
-  for i := 0 to ArrayLength - 1 do
-    Case i of
+  for i := 0 to 2 do
+    case i of
       0: begin OpenChars[i] := '('; CloseChars[i] := ')'; end;
       1: begin OpenChars[i] := '{'; CloseChars[i] := '}'; end;
       2: begin OpenChars[i] := '['; CloseChars[i] := ']'; end;
@@ -94,16 +79,15 @@ begin
 
   if (Start > 0) and (Start <= length(Editor.Text)) then
     TmpCharA := Editor.Text[Start]
-  else
-    TmpCharA := #0;
+  else TmpCharA := #0;
 
   if (Start < length(Editor.Text)) then
     TmpCharB := Editor.Text[Start + 1]
   else TmpCharB := #0;
 
-  if not IsCharBracket(TmpCharA) and not IsCharBracket(TmpCharB) then exit;
+  if not(TmpCharA in AllBrackets) and not(TmpCharB in AllBrackets) then exit;
   S := TmpCharB;
-  if not IsCharBracket(TmpCharB) then
+  if not(TmpCharB in AllBrackets) then
   begin
     P.Char := P.Char - 1;
     S := TmpCharA;
@@ -135,13 +119,16 @@ begin
         if Editor.Canvas.Brush.Color = clNone then
           Editor.Canvas.Brush.Color := Editor.Color;
 
-        Editor.Canvas.TextOut(Pix.X, Pix.Y, S);
+        if Pix.X > Editor.GutterWidth then
+        begin
+          Editor.Canvas.TextOut(Pix.X, Pix.Y, S);
+        end;
         P := Editor.GetMatchingBracketEx(P);
 
         if (P.Char > 0) and (P.Line > 0) then
         begin
           Pix := CharToPixels(P);
-          if Pix.X > Editor.Gutter.Width then
+          if Pix.X > Editor.GutterWidth then
           begin
             if S = OpenChars[i] then
               Editor.Canvas.TextOut(Pix.X, Pix.Y, CloseChars[i])

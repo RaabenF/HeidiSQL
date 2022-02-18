@@ -24,11 +24,10 @@ package SynEdit_D5;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'SynEdit component suite'}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
-  SynEdit_R5,
-  dsnide50;
+  SynEdit_R5;
 
 contains
   SynEditReg in '..\Source\SynEditReg.pas',

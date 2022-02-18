@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: frmExportMain.pas,v 1.2.2.1 2005/01/10 14:08:10 maelh Exp $
+$Id: frmExportMain.pas,v 1.2 2000/11/22 08:37:05 mghie Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -118,7 +118,7 @@ begin
       ExtractFileExt(dlgFileOpen.FileName));
     if Assigned(SynEdit1.Highlighter) then
       Statusbar.SimpleText := 'Using highlighter for ' +
-        SynEdit1.Highlighter.GetFriendlyLanguageName
+        SynEdit1.Highlighter.GetLanguageName
     else
       Statusbar.SimpleText := 'No highlighter assigned';
   end;

@@ -26,7 +26,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: frmMain.pas,v 1.5.2.3 2009/09/29 00:13:16 maelh Exp $
+$Id: frmMain.pas,v 1.6 2007/01/27 06:37:56 etrusco Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -36,14 +36,12 @@ Known Issues:
 
 unit frmMain;
 
-{$I SynEdit.inc}
-
 interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ComCtrls, ToolWin, SynEdit, ImgList, ActnList, SynEditRegexSearch,
-  SynEditMiscClasses, SynEditSearch, SynUnicode;
+  SynEditMiscClasses, SynEditSearch;
 
 type
   TSearchReplaceDemoForm = class(TForm)
@@ -74,7 +72,7 @@ type
     procedure actSearchReplaceExecute(Sender: TObject);
     procedure actSearchUpdate(Sender: TObject);
     procedure SynEditorReplaceText(Sender: TObject; const ASearch,
-      AReplace: UnicodeString; Line, Column: Integer;
+      AReplace: String; Line, Column: Integer;
       var Action: TSynReplaceAction);
     procedure actSearchReplaceUpdate(Sender: TObject);
   private
@@ -110,6 +108,7 @@ var
 
 resourcestring
   STextNotFound = 'Text not found';
+  SNoSelectionAvailable = 'The is no selection available, search whole text?';
 
 { TSearchReplaceDemoForm }
 
@@ -130,7 +129,17 @@ begin
   if not fSearchFromCaret then
     Include(Options, ssoEntireScope);
   if gbSearchSelectionOnly then
-    Include(Options, ssoSelectedOnly);
+  begin
+    if (not SynEditor.SelAvail) or SameText(SynEditor.SelText, gsSearchText) then
+    begin
+      if MessageDlg(SNoSelectionAvailable, mtWarning, [mbYes, mbNo], 0) = mrYes then
+        gbSearchSelectionOnly := False
+      else
+        Exit;
+    end
+    else
+      Include(Options, ssoSelectedOnly);
+  end;
   if gbSearchWholeWords then
     Include(Options, ssoWholeWord);
   if gbSearchRegex then
@@ -184,10 +193,10 @@ begin
     end;
     SearchWholeWords := gbSearchWholeWords;
     if ShowModal = mrOK then begin
+      gbSearchSelectionOnly := SearchInSelectionOnly;
       gbSearchBackwards := SearchBackwards;
       gbSearchCaseSensitive := SearchCaseSensitive;
       gbSearchFromCaret := SearchFromCursor;
-      gbSearchSelectionOnly := SearchInSelectionOnly;
       gbSearchWholeWords := SearchWholeWords;
       gbSearchRegex := SearchRegularExpression;
       gsSearchText := SearchText;
@@ -249,7 +258,7 @@ begin
 end;
 
 procedure TSearchReplaceDemoForm.SynEditorReplaceText(Sender: TObject;
-  const ASearch, AReplace: UnicodeString; Line, Column: Integer;
+  const ASearch, AReplace: String; Line, Column: Integer;
   var Action: TSynReplaceAction);
 var
   APos: TPoint;

@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: EditU2.pas,v 1.11.2.3 2008/09/14 16:24:56 maelh Exp $
+$Id: EditU2.pas,v 1.12 2004/11/10 13:06:14 maelh Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -49,8 +49,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, StdCtrls, ComCtrls, {$IFDEF SYN_COMPILER_4_UP} ImgList, {$ENDIF}
-  Menus, Buttons, Spin, SynEdit, SynUnicode,
-  SynHighlighterASM, SynHighlighterVB,
+  Menus, Buttons, Spin, SynEdit, SynHighlighterASM, SynHighlighterVB,
   SynHighlighterTclTk, SynHighlighterSML, SynHighlighterSQL,
   SynHighlighterProgress, SynHighlighterPHP, SynHighlighterPerl,
   SynHighlighterPas, SynHighlighterBat, SynHighlighterVBScript,
@@ -316,18 +315,18 @@ type
     procedure SynEditorChange(Sender: TObject);
     procedure SynEditorClick(Sender: TObject);
     procedure SynEditorCommandProcessed(Sender: TObject;
-      var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+      var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
     procedure SynEditorDblClick(Sender: TObject);
     procedure SynEditorDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure SynEditorDragOver(Sender, Source: TObject; X, Y: Integer;
       State: TDragState; var Accept: Boolean);
     procedure SynEditorDropFiles(Sender: TObject; X, Y: Integer;
-      AFiles: TUnicodeStrings);
+      AFiles: TStrings);
     procedure SynEditorEnter(Sender: TObject);
     procedure SynEditorExit(Sender: TObject);
     procedure SynEditorKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure SynEditorKeyPress(Sender: TObject; var Key: WideChar);
+    procedure SynEditorKeyPress(Sender: TObject; var Key: Char);
     procedure SynEditorKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure SynEditorMouseDown(Sender: TObject; Button: TMouseButton;
@@ -341,11 +340,11 @@ type
     procedure SynEditorPlaceBookmark(Sender: TObject;
       var Mark: TSynEditMark);
     procedure SynEditorProcessCommand(Sender: TObject;
-      var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+      var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
     procedure SynEditorProcessUserCommand(Sender: TObject;
-      var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+      var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
     procedure SynEditorReplaceText(Sender: TObject; const ASearch,
-      AReplace: UnicodeString; Line, Column: Integer;
+      AReplace: String; Line, Column: Integer;
       var Action: TSynReplaceAction);
     procedure SynEditorStartDrag(Sender: TObject;
       var DragObject: TDragObject);
@@ -378,7 +377,7 @@ type
     procedure DoReplaceText(Sender: TObject);
     procedure btnExportToFileClick(Sender: TObject);
     procedure btnExportToClipboardClick(Sender: TObject);
-    procedure SynEditorContextHelp(Sender: TObject; word: UnicodeString);
+    procedure SynEditorContextHelp(Sender: TObject; word: String);
     procedure cbShrinkListClick(Sender: TObject);
     procedure cbCompletionAttrChange(Sender: TObject);
     procedure cbxCompletionColorChange(Sender: TObject);
@@ -1017,7 +1016,7 @@ begin
 end;
 
 procedure TDemoMainForm.SynEditorCommandProcessed(Sender: TObject;
-  var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+  var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
 begin
   if cbKeyboard.Checked then
     LogEvent('OnCommandProcessed');
@@ -1044,7 +1043,7 @@ begin
 end;
 
 procedure TDemoMainForm.SynEditorDropFiles(Sender: TObject; X, Y: Integer;
-  AFiles: TUnicodeStrings);
+  AFiles: TStrings);
 begin
   if cbOther.Checked then
     LogEvent('OnDropFiles');
@@ -1078,7 +1077,7 @@ begin
     LogEvent('OnKeyDown');
 end;
 
-procedure TDemoMainForm.SynEditorKeyPress(Sender: TObject; var Key: WideChar);
+procedure TDemoMainForm.SynEditorKeyPress(Sender: TObject; var Key: Char);
 begin
   if cbKeyboard.Checked then
     LogEvent('OnKeyPress');
@@ -1128,21 +1127,21 @@ begin
 end;
 
 procedure TDemoMainForm.SynEditorProcessCommand(Sender: TObject;
-  var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+  var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
 begin
   if cbKeyboard.Checked then
     LogEvent('OnProcessCommand');
 end;
 
 procedure TDemoMainForm.SynEditorProcessUserCommand(Sender: TObject;
-  var Command: TSynEditorCommand; var AChar: WideChar; Data: Pointer);
+  var Command: TSynEditorCommand; var AChar: Char; Data: Pointer);
 begin
   if cbKeyboard.Checked then
     LogEvent('OnProcessUserCommand');
 end;
 
 procedure TDemoMainForm.SynEditorReplaceText(Sender: TObject;
-  const ASearch, AReplace: UnicodeString; Line, Column: Integer;
+  const ASearch, AReplace: String; Line, Column: Integer;
   var Action: TSynReplaceAction);
 begin
   if cbOther.Checked then
@@ -1163,7 +1162,7 @@ const
   InsertModeStrs: array[boolean] of string = ('Overwrite', 'Insert');
 var
   p: TBufferCoord;
-  Token: UnicodeString;
+  Token: string;
   Attri: TSynHighlighterAttributes;
 begin
   // Note: scAll for new file loaded
@@ -1316,7 +1315,7 @@ procedure TDemoMainForm.cbxAttrSelectChange(Sender: TObject);
 var
   Attr: TSynHighlighterAttributes;
 begin
-  Attr := TSynHighlighterAttributes.Create('', '');
+  Attr := TSynHighlighterAttributes.Create('');
   try
     if SynEditor.Highlighter <> nil then
       Attr.Assign(SynEditor.Highlighter.Attribute[cbxAttrSelect.ItemIndex]);
@@ -1402,7 +1401,7 @@ begin
   try
     Form2.lbKeywords.Items.Assign(Highlighter.Keywords);
     if Form2.ShowModal = mrOk then
-      Highlighter.Keywords.Assign(Form2.lbKeywords.Items);
+      Highlighter.Keywords := Form2.lbKeywords.Items;
   finally
     Form2.Free;
     Form2 := nil;
@@ -1616,13 +1615,13 @@ begin
   end;
 end;
 
-procedure TDemoMainForm.SynEditorContextHelp(Sender: TObject; word: UnicodeString);
+procedure TDemoMainForm.SynEditorContextHelp (Sender: TObject; word: String);
 var
   hlpmsg : array[0..255] of char;
 begin
-  StrFmt(hlpmsg, 'Need help for %s?', [word]);
+  StrFmt (hlpmsg,'Need help for %s?',[word]);
   with Application do
-    MessageBox(hlpmsg, PChar(Title), mb_ok or mb_iconquestion);
+    MessageBox (hlpmsg,PChar (Title),mb_ok or mb_iconquestion);
 end;
 
 procedure TDemoMainForm.cbShrinkListClick(Sender: TObject);

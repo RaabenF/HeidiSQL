@@ -36,7 +36,7 @@ object MainForm: TMainForm
     Top = 367
     Width = 977
     Height = 80
-    SingleLineMode = True
+    SingleLineMode = False
     Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -184,6 +184,8 @@ object MainForm: TMainForm
         OnInitChildren = DBtreeInitChildren
         OnInitNode = DBtreeInitNode
         OnMouseUp = DBtreeMouseUp
+        Touch.InteractiveGestures = [igPan, igPressAndTap]
+        Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
         Columns = <
           item
             Position = 0
@@ -349,15 +351,15 @@ object MainForm: TMainForm
         object lblFilterVT: TLabel
           Left = 36
           Top = 6
-          Width = 28
-          Height = 13
+          Width = 30
+          Height = 14
           Caption = 'Filter:'
         end
         object lblFilterVTInfo: TLabel
           Left = 239
           Top = 6
-          Width = 66
-          Height = 13
+          Width = 75
+          Height = 14
           Caption = 'lblFilterVTInfo'
         end
         object btnCloseFilterPanel: TSpeedButton
@@ -373,7 +375,7 @@ object MainForm: TMainForm
           Left = 70
           Top = 3
           Width = 154
-          Height = 21
+          Height = 22
           Images = VirtualImageListMain
           RightButton.Hint = 'Clear filter'
           RightButton.ImageIndex = 193
@@ -389,7 +391,7 @@ object MainForm: TMainForm
         Top = 0
         Width = 804
         Height = 311
-        ActivePage = tabHost
+        ActivePage = tabQuery
         Align = alClient
         HotTrack = True
         Images = VirtualImageListMain
@@ -408,7 +410,7 @@ object MainForm: TMainForm
             Top = 0
             Width = 796
             Height = 282
-            ActivePage = tabDatabases
+            ActivePage = tabProcessList
             Align = alClient
             HotTrack = True
             Images = VirtualImageListMain
@@ -444,6 +446,8 @@ object MainForm: TMainForm
                 OnHeaderClick = AnyGridHeaderClick
                 OnHeaderDraggedOut = AnyGridHeaderDraggedOut
                 OnInitNode = ListDatabasesInitNode
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Position = 0
@@ -532,6 +536,8 @@ object MainForm: TMainForm
                 OnHeaderClick = AnyGridHeaderClick
                 OnHeaderDraggedOut = AnyGridHeaderDraggedOut
                 OnInitNode = AnyGridInitNode
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Position = 0
@@ -585,6 +591,8 @@ object MainForm: TMainForm
                 OnHeaderClick = AnyGridHeaderClick
                 OnHeaderDraggedOut = AnyGridHeaderDraggedOut
                 OnInitNode = AnyGridInitNode
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Position = 0
@@ -657,6 +665,8 @@ object MainForm: TMainForm
                 OnHeaderClick = AnyGridHeaderClick
                 OnHeaderDraggedOut = AnyGridHeaderDraggedOut
                 OnInitNode = AnyGridInitNode
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Alignment = taRightJustify
@@ -719,8 +729,8 @@ object MainForm: TMainForm
                   object lblExplainProcess: TLabel
                     Left = 95
                     Top = 2
-                    Width = 41
-                    Height = 13
+                    Width = 47
+                    Height = 14
                     Cursor = crHandPoint
                     Hint = 'Analyze this query'
                     Caption = 'EXPLAIN'
@@ -730,8 +740,8 @@ object MainForm: TMainForm
                   object lblExplainProcessAnalyzer: TLabel
                     Left = 170
                     Top = 2
-                    Width = 162
-                    Height = 13
+                    Width = 180
+                    Height = 14
                     Cursor = crHandPoint
                     Hint = 'Analyze this query on MariaDB.org'
                     Caption = 'EXPLAIN analyzer on MariaDB.org'
@@ -814,6 +824,8 @@ object MainForm: TMainForm
                 OnHeaderClick = AnyGridHeaderClick
                 OnHeaderDraggedOut = AnyGridHeaderDraggedOut
                 OnInitNode = AnyGridInitNode
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Position = 0
@@ -889,6 +901,8 @@ object MainForm: TMainForm
             OnInitNode = ListTablesInitNode
             OnKeyPress = ListTablesKeyPress
             OnNewText = ListTablesNewText
+            Touch.InteractiveGestures = [igPan, igPressAndTap]
+            Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
             Columns = <
               item
                 Position = 0
@@ -1018,6 +1032,8 @@ object MainForm: TMainForm
             Caption = 'No data available for this item.'
             Layout = tlCenter
             WordWrap = True
+            ExplicitWidth = 165
+            ExplicitHeight = 14
           end
           object pnlDataTop: TPanel
             Left = 0
@@ -1042,13 +1058,13 @@ object MainForm: TMainForm
               WordWrap = True
             end
             object tlbDataButtons: TToolBar
-              Left = 452
+              Left = 427
               Top = 1
-              Width = 343
+              Width = 368
               Height = 23
               Align = alRight
               AutoSize = True
-              ButtonWidth = 67
+              ButtonWidth = 72
               Caption = 'tlbDataButtons'
               Images = VirtualImageListMain
               List = True
@@ -1063,12 +1079,12 @@ object MainForm: TMainForm
                 Action = actDataShowNext
               end
               object tbtnDataShowAll: TToolButton
-                Left = 67
+                Left = 72
                 Top = 0
                 Action = actDataShowAll
               end
               object ToolButton2: TToolButton
-                Left = 134
+                Left = 144
                 Top = 0
                 Width = 8
                 Caption = 'ToolButton2'
@@ -1077,7 +1093,7 @@ object MainForm: TMainForm
                 Style = tbsSeparator
               end
               object tbtnDataSorting: TToolButton
-                Left = 142
+                Left = 152
                 Top = 0
                 AllowAllUp = True
                 Caption = 'Sorting'
@@ -1087,7 +1103,7 @@ object MainForm: TMainForm
                 OnClick = btnDataClick
               end
               object tbtnDataColumns: TToolButton
-                Left = 209
+                Left = 224
                 Top = 0
                 AllowAllUp = True
                 Caption = 'Columns'
@@ -1097,7 +1113,7 @@ object MainForm: TMainForm
                 OnClick = btnDataClick
               end
               object tbtnDataFilter: TToolButton
-                Left = 276
+                Left = 296
                 Top = 0
                 AllowAllUp = True
                 Caption = 'Filter'
@@ -1122,16 +1138,16 @@ object MainForm: TMainForm
             object lblTableFilter: TLabel
               Left = 633
               Top = 0
-              Width = 123
-              Height = 13
+              Width = 141
+              Height = 14
               Anchors = [akTop, akRight]
               Caption = 'Create multi column filter:'
             end
             object lblRecentFilters: TLabel
               Left = 1
               Top = 3
-              Width = 68
-              Height = 13
+              Width = 76
+              Height = 14
               Caption = 'Recent filters:'
             end
             object btnFilterApply: TButton
@@ -1197,7 +1213,7 @@ object MainForm: TMainForm
               Left = 633
               Top = 15
               Width = 156
-              Height = 21
+              Height = 22
               Anchors = [akTop, akRight]
               TabOrder = 1
               OnChange = editFilterSearchChange
@@ -1208,7 +1224,7 @@ object MainForm: TMainForm
               Left = 77
               Top = 0
               Width = 553
-              Height = 21
+              Height = 22
               AutoDropDown = True
               AutoCloseUp = True
               Style = csDropDownList
@@ -1264,6 +1280,8 @@ object MainForm: TMainForm
             OnMouseUp = AnyGridMouseUp
             OnMouseWheel = AnyGridMouseWheel
             OnNewText = AnyGridNewText
+            Touch.InteractiveGestures = [igPan, igPressAndTap]
+            Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
             Columns = <>
           end
         end
@@ -1279,6 +1297,8 @@ object MainForm: TMainForm
             Align = alTop
             AutoSnap = False
             ResizeStyle = rsUpdate
+            ExplicitLeft = -2
+            ExplicitTop = 90
           end
           object pnlQueryMemo: TPanel
             Left = 0
@@ -1348,10 +1368,31 @@ object MainForm: TMainForm
               FontSmoothing = fsmNone
               RemovedKeystrokes = <
                 item
+                  Command = ecLineStart
+                  ShortCut = 36
+                end
+                item
                   Command = ecDeleteWord
                   ShortCut = 16468
+                end
+                item
+                  Command = ecDeleteLine
+                  ShortCut = 16473
+                end
+                item
+                  Command = ecRedo
+                  ShortCut = 24666
                 end>
               AddedKeystrokes = <
+                item
+                  Command = ecLineStart
+                  ShortCut = 36
+                  ShortCut2 = 24666
+                end
+                item
+                  Command = ecRedo
+                  ShortCut = 16473
+                end
                 item
                   Command = ecDeleteWord
                   ShortCut = 16430
@@ -1377,9 +1418,9 @@ object MainForm: TMainForm
               TabOrder = 1
               object treeQueryHelpers: TVirtualStringTree
                 Left = 0
-                Top = 21
+                Top = 22
                 Width = 185
-                Height = 75
+                Height = 74
                 Align = alClient
                 Constraints.MinWidth = 10
                 DragMode = dmAutomatic
@@ -1411,6 +1452,8 @@ object MainForm: TMainForm
                 OnNewText = treeQueryHelpersNewText
                 OnNodeClick = treeQueryHelpersNodeClick
                 OnResize = treeQueryHelpersResize
+                Touch.InteractiveGestures = [igPan, igPressAndTap]
+                Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
                 Columns = <
                   item
                     Position = 0
@@ -1427,7 +1470,7 @@ object MainForm: TMainForm
                 Left = 0
                 Top = 0
                 Width = 185
-                Height = 21
+                Height = 22
                 Align = alTop
                 Images = VirtualImageListMain
                 LeftButton.ImageIndex = 30
@@ -1490,6 +1533,8 @@ object MainForm: TMainForm
             OnMouseWheel = AnyGridMouseWheel
             OnNewText = AnyGridNewText
             OnStartOperation = AnyGridStartOperation
+            Touch.InteractiveGestures = [igPan, igPressAndTap]
+            Touch.InteractiveGestureOptions = [igoPanSingleFingerHorizontal, igoPanSingleFingerVertical, igoPanInertia, igoPanGutter, igoParentPassthrough]
             Columns = <>
           end
           object tabsetQuery: TTabSet
@@ -1539,7 +1584,7 @@ object MainForm: TMainForm
     BevelKind = bkNone
     TabOrder = 4
     object imgDonate: TImage
-      Left = 810
+      Left = 820
       Top = 2
       Width = 129
       Height = 22
@@ -1804,7 +1849,7 @@ object MainForm: TMainForm
       OnClick = DonateClick
     end
     object ToolBarMainButtons: TToolBar
-      Left = 11
+      Left = 12
       Top = 2
       Width = 786
       Height = 22

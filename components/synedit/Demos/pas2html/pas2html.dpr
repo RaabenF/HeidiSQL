@@ -29,7 +29,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: pas2html.dpr,v 1.2.2.2 2008/09/14 16:24:57 maelh Exp $
+$Id: pas2html.dpr,v 1.2 2000/11/22 08:37:05 mghie Exp $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -43,54 +43,41 @@ program pas2html;
 
 {$I SynEdit.inc}
 
-uses                                                             
-  Windows, Classes, Clipbrd, SynHighlighterPas, SynExportHTML,
-  {$IFDEF SYN_CLX}
-  QSynUnicode;
-  {$ELSE}
-  SynUnicode;
-  {$ENDIF}
-  
+uses
+  Windows, Classes, Clipbrd, SynHighlighterPas, SynExportHTML;
+
 var
-  SettingsLines: TStrings;
-  TextLines: TUnicodeStringList;
+  ALines: TStringList;
   Syn: TSynPasSyn;
   Exp: TSynExporterHTML;
 begin
-  if ClipboardProvidesText then
-  begin
-    Syn := TSynPasSyn.Create(nil);
+  if Clipboard.HasFormat(CF_TEXT) then begin
+    ALines := TStringList.Create;
     try
-      // get syntax highlighter settings
-      SettingsLines := TStringList.Create;
+      Syn := TSynPasSyn.Create(nil);
       try
-        Syn.EnumUserSettings(SettingsLines);
-        if SettingsLines.Count > 0 then
-          Syn.UseUserSettings(SettingsLines.Count - 1);
-      finally
-        SettingsLines.Free;
-      end;
-
-      TextLines := TUnicodeStringList.Create;
-      try
+        // get syntax highlighter settings
+        Syn.EnumUserSettings(ALines);
+        if ALines.Count > 0 then
+          Syn.UseUserSettings(ALines.Count - 1);
         // load text from clipboard
-        TextLines.Text := GetClipboardText;
+        ALines.Text := Clipboard.AsText;  
         // export ALines to HTML, as HTML fragment in text format
         Exp := TSynExporterHTML.Create(nil);
         try
           Exp.Highlighter := Syn;
           Exp.ExportAsText := TRUE;
           Exp.CreateHTMLFragment := TRUE;
-          Exp.ExportAll(TextLines);
+          Exp.ExportAll(ALines);
           Exp.CopyToClipboard;
         finally
           Exp.Free;
         end;
       finally
-        TextLines.Free;
+        Syn.Free;
       end;
     finally
-      Syn.Free;
+      ALines.Free;
     end;
   end;
 end.
