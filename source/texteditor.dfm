@@ -181,11 +181,6 @@ object frmTextEditor: TfrmTextEditor
     WantTabs = True
     OnChange = MemoTextChange
     FontSmoothing = fsmNone
-    RemovedKeystrokes = <>
-    AddedKeystrokes = <
-      item
-        Command = ecNone
-      end>
   end
   object popupLinebreaks: TPopupMenu
     Images = MainForm.VirtualImageListMain

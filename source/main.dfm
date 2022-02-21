@@ -1368,31 +1368,10 @@ object MainForm: TMainForm
               FontSmoothing = fsmNone
               RemovedKeystrokes = <
                 item
-                  Command = ecLineStart
-                  ShortCut = 36
-                end
-                item
                   Command = ecDeleteWord
                   ShortCut = 16468
-                end
-                item
-                  Command = ecDeleteLine
-                  ShortCut = 16473
-                end
-                item
-                  Command = ecRedo
-                  ShortCut = 24666
                 end>
               AddedKeystrokes = <
-                item
-                  Command = ecLineStart
-                  ShortCut = 36
-                  ShortCut2 = 24666
-                end
-                item
-                  Command = ecRedo
-                  ShortCut = 16473
-                end
                 item
                   Command = ecDeleteWord
                   ShortCut = 16430
